@@ -2,6 +2,10 @@ package custom_array_list;
 
 import java.util.Arrays;
 
+/**
+ * Класс, реализующий CustomArrayList.
+ * @param <A> Тип элементов, которые будут храниться в списке.
+ */
 public class CustomArrayList<A> implements CustomList<A> {
     private Object[] elements;
     private int size = 0;
