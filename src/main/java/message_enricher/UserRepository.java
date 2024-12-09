@@ -12,7 +12,7 @@ public class UserRepository {
     // функция для тестирования
     private String generateString() {
 
-        int length = 7;
+        int length = 10;
         char[] text = new char[length];
         for (int i = 0; i < length; i++) {
             text[i] = characters.charAt(rng.nextInt(characters.length()));

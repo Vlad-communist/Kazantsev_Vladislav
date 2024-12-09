@@ -1,6 +1,6 @@
 package message_enricher;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ class EnrichmentServiceTest {
         assertEquals("book_card", result.content.get("page"));
 
         assertTrue(result.content.containsKey("msisdn"));
-        assertEquals("msisdn", result.content.get("88005553535"));
+        assertEquals("88005553535", result.content.get("msisdn"));
 
         assertEquals(5, result.content.size());
 
@@ -112,9 +112,13 @@ class EnrichmentServiceTest {
         assertEquals("book_card", result.content.get("page"));
 
         assertTrue(result.content.containsKey("msisdn"));
-        assertEquals("msisdn", result.content.get("88005553535"));
+        assertEquals("88005553535", result.content.get("msisdn"));
     }
 
+    // Проверяем потенциальную ошибку, когда два запроса с одним msisdn могут неправильно обработаться
+    // Второй запрос приходит, и пока первый не успел обработаться до конца, второй перезаписывает имя фамилию
+    // Проверяем на равенство все имена и фамилии
+    // В теории тест может не сработать, т.к. имя фамилися генерится рандомно, но это очень маловероятно (1 / 26^20)
     @Test
     void testAsyncQueries() throws InterruptedException {
         Map<String, String> content = new HashMap<>();
@@ -140,5 +144,12 @@ class EnrichmentServiceTest {
             });
         }
         latch.await();
+
+        for (int i = 0; i < 5; ++i) {
+            for (int j = i + 1; j < 5; ++j) {
+                assertEquals(enrichmentResults.get(i).content.get("firstName"), enrichmentResults.get(j).content.get("firstName"));
+                assertEquals(enrichmentResults.get(i).content.get("lastName"), enrichmentResults.get(j).content.get("lastName"));
+            }
+        }
     }
 }
